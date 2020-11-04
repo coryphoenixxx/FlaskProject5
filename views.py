@@ -10,24 +10,20 @@ from mail import send_order_mail
 
 @app.route('/', methods=['GET', 'POST'])
 def render_main():
-    try:
-        cart = session.get('cart', {'total_cost': 0, 'dishes_list': []})
+    cart = session.get('cart', {'total_cost': 0, 'dishes_list': []})
+    session['cart'] = cart
+
+    form = DishForm()
+    if request.method == 'POST':
+        id = form.dish_id.data
+        dish = db.session.query(Dish).get(id)
+        cart['total_cost'] += dish.price
+        cart['dishes_list'].append(id)
         session['cart'] = cart
+        return redirect('/')
 
-        form = DishForm()
-        if request.method == 'POST':
-            id = form.dish_id.data
-            dish = db.session.query(Dish).get(id)
-            cart['total_cost'] += dish.price
-            cart['dishes_list'].append(id)
-            session['cart'] = cart
-            return redirect('/')
-
-        categories = db.session.query(Category).order_by(Category.id.desc()).all()
-        return render_template('main.html', cats=categories, cart=cart, form=form, email=session.get('email', False))
-    except Exception as err:
-        print(str(err))
-        return redirect('/500/')
+    categories = db.session.query(Category).order_by(Category.id.desc()).all()
+    return render_template('main.html', cats=categories, cart=cart, form=form, email=session.get('email', False))
 
 
 @app.route('/cart/', methods=['GET', 'POST'])
@@ -164,9 +160,3 @@ def render_account():
 @app.errorhandler(404)
 def page_404(e):
     return render_template('404.html', error=e), 404
-
-@app.route('/500/')
-def page_500():
-    err = session.get('err')
-    return err
-
