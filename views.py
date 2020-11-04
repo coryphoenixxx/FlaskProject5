@@ -48,9 +48,8 @@ def render_cart():
         db.session.commit()
 
         dish_titles = [db.session.query(Dish).get(id).title for id in session['cart']['dishes_list']]
-        send_order_mail(order.email, order.username, dish_titles)
-
         session.pop('cart')
+        send_order_mail(order.email, order.username, dish_titles)
         return render_template('ordered.html')
 
     if request.method == 'POST':
@@ -159,4 +158,4 @@ def render_account():
 
 @app.errorhandler(404)
 def page_404(e):
-    return render_template('404.html', error=e), 404
+    return render_template('404.html'), 404
