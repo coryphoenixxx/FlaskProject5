@@ -23,27 +23,24 @@
           </div>
 
             {% for msg in get_flashed_messages() %}
-            <div class="alert alert-warning text-center" role="alert">{{ msg }}</div>
+            <div class="alert alert-success text-center" role="alert">{{ msg }}</div>
             {% endfor %}
 
             {% with success_msg = get_flashed_messages(category_filter=['success']) %}
                 {% if not success_msg %}
 
-
-                {% if form.email.errors %}
-                <div class="alert alert-warning text-center">{{ form.email.errors[0] }}</div>
-                {% endif %}
-
                 <div class="mt-5 form-label-group">
+                {% if form.email.errors %}
+                <div class="alert alert-danger text-center">{{ form.email.errors[0] }}</div>
+                {% endif %}
                     {{ form.email.label(class="text-muted") }}
                     {{ form.email(class="form-control") }}
                     <label for="inputEmail"></label>
                 </div>
 
                 {% if form.password.errors %}
-                <div class="alert alert-warning text-center">{{ form.password.errors[0] }}</div>
+                <div class="alert alert-danger text-center">{{ form.password.errors[0] }}</div>
                 {% endif %}
-
                 <div class="form-label-group">
                     {{ form.password.label(class="text-muted") }}
                     {{ form.password(class="form-control") }}

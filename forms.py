@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 
 class DishForm(FlaskForm):
      dish_id = IntegerField()
+     category = StringField()
      submit = SubmitField()
 
 

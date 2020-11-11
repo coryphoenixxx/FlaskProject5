@@ -16,11 +16,12 @@ def render_main():
     form = DishForm()
     if request.method == 'POST':
         id = form.dish_id.data
+        category = form.category.data
         dish = db.session.query(Dish).get(id)
         cart['total_cost'] += dish.price
         cart['dishes_list'].append(id)
         session['cart'] = cart
-        return redirect('/')
+        return redirect(f'/#{category}')
 
     categories = db.session.query(Category).order_by(Category.id.desc()).all()
     return render_template('main.html', cats=categories, cart=cart, form=form, email=session.get('email', False))
@@ -75,7 +76,7 @@ def render_cart():
         if last_order:
             uinfo = [last_order[0].username, last_order[0].addr, last_order[0].phone]
 
-    return render_template('cart.html', dish_form=dish_form, order_form=order_form, dishes=dishes, cart=cart, email=session.get('email', False), uinfo=uinfo)
+    return render_template('cart.html', dish_form=dish_form, order_form=order_form, dishes=dishes, cart=cart, email=email, uinfo=uinfo)
 
 
 @app.route('/registration/', methods=['GET', 'POST'])

@@ -33,13 +33,13 @@
   <header class="container mt-3">
     <nav class="py-1 navbar navbar-dark bg-dark">
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <a href="{{ url_for('render_main') }}" class="h5 my-2 text-white bg-dark" >Stepik Delivery</a>
+        <a href="{{ url_for('render_main') }}" class="h5 my-2 text-white" style="text-decoration: none;">Stepik Delivery</a>
       </ul>
 
-        {% if email %} <a href="{{ url_for('render_account') }}"> {{ email }} </a>{% endif %}
+        {% if email %} <a href="{{ url_for('render_account') }}" class="btn btn-outline-primary mr-3"> Профиль({{ email.split('@')[0] }}) </a>{% endif %}
 
-        <a href="{{ url_for('render_cart') }}" class="my-2 text-white bg-dark">
-         &nbsp&nbsp🛒 {{ cart['dishes_list'] | length   }} блюд(а) на {{ cart['total_cost'] }} ₽&nbsp&nbsp</a>
+        <a href="{{ url_for('render_cart') }}" class="text-white my-2 mr-3">
+         🛒 {{ cart['dishes_list'] | length   }} блюд(а) на {{ cart['total_cost'] }} ₽</a>
 
       {% if email %}
       <a href="{{ url_for('render_logout') }}" class="btn btn-light btn-sm ml-4s">Выйти</a>

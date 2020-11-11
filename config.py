@@ -11,7 +11,6 @@ class Config:
     MAIL_PORT = 465
     MAIL_USE_SSL = True
     MAIL_DEBUG = False
-    MAIL_USE_TLS = False
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")

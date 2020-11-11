@@ -13,30 +13,29 @@
 
 
     {% for cat in cats %}
-    <section>
-      <h3 class="my-4">{{ cat.title }}</h3>
+    <section id="{{ cat.title }}" >
+      <h2 class="mt-5 mb-1"><a href="#{{ cat.title }}" style="text-decoration: none; color: black;">{{ cat.title }}</a></h2>
       <div class="row mt-4">
-
-
-        {% for dish in (cat.dishes| shuffle)[:3] %}
+        {% for dish in (cat.dishes | shuffle)[:3] %}
         <div class="col-12 col-md-4">
-          <div class="card mb-3">
-            <img src=/static/pictures/{{ dish.pic }} width="300" height="200" class="card-img-top" alt="">
-            <div class="card-body">
-              <h4 class="h5 card-title">{{ dish.title | truncate(20) }}</h4>
-              <p class="card-text">{{ dish.desc | truncate(50) }}</p>
-              <h4 class="h5 card-title">{{ dish.price }} ₽</h4>
-
-              <div class="container">
-                    <form action="/" method="POST">
+            <div class="card mb-3 h-100 w-300 bg-light border-secondary">
+                <div class="card-header h-30">
+                    <h4 class="h5 card-title text-center">{{ dish.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <img src=/static/pictures/{{ dish.pic }} width="240" height="300" class="card-img-top" alt="">
+                    <p class="card-text text-justify mt-3">{{ dish.desc | truncate(60) }}</p>
+                </div>
+                <div class="h5 card-footer">
+                    <h4 class="h5 card-title">{{ dish.price }} ₽</h4>
+                    <form action="/#" method="POST">
                         {{ form.csrf_token }}
+                        {{ form.category(type="hidden", value=cat.title) }}
                         {{ form.dish_id(type="hidden", value=dish.id) }}
-                        {{ form.submit(class="btn btn-primary btn-block mt-4", value="В корзину") }}
+                        {{ form.submit(class="btn btn-primary btn-block", value="В корзину") }}
                     </form>
-              </div>
-
+                </div>
             </div>
-          </div>
         </div>
         {% endfor %}
 

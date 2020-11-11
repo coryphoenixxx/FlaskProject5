@@ -17,7 +17,7 @@ dishes_categories_association = db.Table('dishes_categories',
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(32), nullable=False)
+    email = db.Column(db.String(32), nullable=False, unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
     orders = db.relationship('Order')
 
@@ -47,7 +47,7 @@ class Order(db.Model):
 class Dish(db.Model):
     __tablename__ = 'dishes'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
+    title = db.Column(db.String, nullable=False, unique=True)
     price = db.Column(db.REAL, nullable=False)
     desc = db.Column(db.String, nullable=False)
     pic = db.Column(db.String, nullable=False)
