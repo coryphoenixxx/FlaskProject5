@@ -18,12 +18,8 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(32), nullable=False, unique=True)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     orders = db.relationship('Order')
-
-    def __init__(self, email, password):
-        self.email = email
-        self.password_hash = generate_password_hash(password)
 
     def password_valid(self, password):
         return check_password_hash(self.password_hash, password)

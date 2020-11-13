@@ -1,6 +1,6 @@
 import json
 from flask import render_template, session, redirect, request, flash
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import app, db
 from models import Category, Dish, User, Order
@@ -10,7 +10,7 @@ from mail import send_order_mail
 
 @app.route('/', methods=['GET', 'POST'])
 def render_main():
-    cart = session.get('cart', {'total_cost': 0, 'dishes_list': []})
+    cart = session.get('cart', {'total': 0, 'dishes_list': []})
     session['cart'] = cart
 
     form = DishForm()
@@ -18,7 +18,7 @@ def render_main():
         id = form.dish_id.data
         category = form.category.data
         dish = db.session.query(Dish).get(id)
-        cart['total_cost'] += dish.price
+        cart['total'] += dish.price
         cart['dishes_list'].append(id)
         session['cart'] = cart
         return redirect(f'/#{category}')
@@ -29,14 +29,14 @@ def render_main():
 
 @app.route('/cart/', methods=['GET', 'POST'])
 def render_cart():
-    cart = session.get('cart', {'total_cost': 0, 'dishes_list': []})
+    cart = session.get('cart', {'total': 0, 'dishes_list': []})
     session['cart'] = cart
 
     dish_form = DishForm()
     order_form = OrderForm()
 
     if order_form.validate_on_submit():
-        order = Order(total=session['cart']['total_cost'],
+        order = Order(total=session['cart']['total'],
                       status="в процессе",
                       username=order_form.username.data,
                       phone=order_form.phone.data,
@@ -56,7 +56,7 @@ def render_cart():
     if request.method == 'POST':
         id = dish_form.dish_id.data
         dish = db.session.query(Dish).get(id)
-        cart['total_cost'] -= dish.price
+        cart['total'] -= dish.price
         cart['dishes_list'].pop(cart['dishes_list'].index(id))
         flash("Блюдо удалено из корзины")
         return redirect('/cart/')
@@ -86,7 +86,7 @@ def render_registration():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(form.email.data, form.password.data)
+        user = User(email=form.email.data, password=generate_password_hash(form.password.data))
         is_user = db.session.query(User).filter_by(email=user.email).first()
         if is_user:
             flash("Пользователь с указанной почтой уже существует")
@@ -95,7 +95,7 @@ def render_registration():
         db.session.commit()
         session['email'] = user.email
         flash("Вы успешно зарегистрированы!", category='success')
-        is_cart = session.get('cart', {'total_cost': 0, 'dishes_list': []})['total_cost']
+        is_cart = session.get('cart', {'total': 0, 'dishes_list': []})['total']
         return render_template('registration.html', form=form, is_cart=is_cart)
 
     return render_template('registration.html', form=form)
@@ -111,7 +111,7 @@ def render_login():
         email = form.email.data
         password = form.password.data
         user = db.session.query(User).filter_by(email=email).first()
-        if user and check_password_hash(user.password_hash, password):
+        if user and check_password_hash(user.password, password):
             session['email'] = email
             return redirect('/')
         flash("Неверная почта или пароль")
@@ -152,7 +152,7 @@ def render_account():
         uorders.append(order)
 
     return render_template('account.html',
-                           cart=session.get('cart', {'total_cost': 0, 'dishes_list': []}),
+                           cart=session.get('cart', {'total': 0, 'dishes_list': []}),
                            email=session.get('email', False),
                            orders=uorders)
 
